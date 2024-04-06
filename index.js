@@ -55,7 +55,7 @@ app.post("/db-pgadmin/db-create", async(req,res) => {
   }catch(err){
     console.log(err);
   }
-})
+});
 
 app.patch("/db-pgadmin/db-ubah", async(req, res) => {
   try {
@@ -70,7 +70,7 @@ app.patch("/db-pgadmin/db-ubah", async(req, res) => {
   } catch (err) {
     console.log(err);
   }
-})
+});
 
 app.delete("/db-pgadmin/db-hapus", async(req, res) => {
   try {
@@ -84,6 +84,6 @@ app.delete("/db-pgadmin/db-hapus", async(req, res) => {
   } catch (err) {
     console.log(err);
   }
-})
+});
 
 app.listen(PORT, () => console.log(`Server listening on port ${PORT}`));
