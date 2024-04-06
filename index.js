@@ -6,7 +6,10 @@ const PORT = 3000;
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.send("hai guis!");
+  res.send({
+    "nama": "Aditya Rizki Muhammad",
+    "asal": "Boyolali",
+  });
 });
 
 
@@ -20,7 +23,8 @@ app.get("/db-pgadmin", async(req, res) => {
     console.log(err);
   }
 });
-app.get("/db-pgadmin/db-id", async(req, res) => {
+
+app.get("/db-pgadmin/db-id", async(req, res) => { //parameter link
   try {
     const {sid} = req.body;
     const [rows, fields] = await dbconnection.query(`SELECT * FROM student WHERE sid = ${sid}`);
