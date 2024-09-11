@@ -1,17 +1,38 @@
+require('dotenv').config()
 const express = require("express");
 const app = express();
 const dbconnection = require("./connection");
 
 const PORT = 3000;
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.get("/", (req, res) => {
-  res.send({
-    "nama": "Aditya Rizki Muhammad",
-    "asal": "Boyolali",
-  });
-});
+// Set EJS as the templating engine
+app.set('view engine', 'ejs');
 
+// app.use(express.static("public"))
+
+// app.get("/", (req, res) => {
+//   res.send({
+//     "nama": "Aditya Rizki Muhammad",
+//     "asal": "Boyolali",
+//   });
+// });
+
+app.get("/", async (req, res) => {
+  try {
+    const result = await dbconnection.query('SELECT * FROM student');
+    const students = result.rows
+    const data = {
+      students: students
+    }
+
+    res.render("index", data);
+  }
+  catch (err) {
+    console.error(err)
+  }
+})
 
 app.get("/db-pgadmin", async(req, res) => {
   try {
@@ -37,21 +58,24 @@ app.get("/db-pgadmin/db-id", async(req, res) => { //parameter link
 app.post("/db-pgadmin/db-create", async(req,res) => {
   try{
     const {sid, sname, uktstatus, alamat, email} = req.body
+    console.log(req.body);
     if (!sid || !sname || !uktstatus || !alamat || !email) {
       return res.status(400).json({ error: "Semua bidang harus diisi!" });
     }
-    const [result] = await dbconnection.query(`insert into student values (${sid}, '${sname}', ${uktstatus}, '${alamat}', '${email}')`);
-    res.json(
-      {
-        data: {
-          result,
-          sid: sid,
-          sname: sname,
-          uktstatus: uktstatus,
-        },
-        message: "user created!"
-      }
-    );
+    await dbconnection.query(`insert into student values (${sid}, '${sname}', '${uktstatus}', '${alamat}', '${email}')`);
+    res.redirect('/')
+    // const [result] = await dbconnection.query(`insert into student values (${sid}, '${sname}', '${uktstatus}', '${alamat}', '${email}')`);
+    // res.json(
+    //   {
+    //     data: {
+    //       result,
+    //       sid: sid,
+    //       sname: sname,
+    //       uktstatus: uktstatus,
+    //     },
+    //     message: "user created!"
+    //   }
+    // );
   }catch(err){
     console.log(err);
   }
@@ -63,10 +87,13 @@ app.patch("/db-pgadmin/db-ubah", async(req, res) => {
     // if (!sid || !sname || !uktstatus || !alamat || !email) {
     //   return res.status(400).json({ error: "Semua bidang harus diisi!" });
     // }
-    const sql = `UPDATE student SET sname = '${sname}', uktstatus = ${uktstatus}, alamat = '${alamat}', email = '${email}' WHERE sid = ${sid}`;
-    const [result, fields] = await dbconnection.query(sql);
-    res.send(result);
-    console.log(result);
+    const sql = `UPDATE student SET sname = '${sname}', uktstatus = '${uktstatus}', alamat = '${alamat}', email = '${email}' WHERE sid = '${sid}'`;
+    console.log(sql)
+    await dbconnection.query(sql);
+    res.redirect('/')
+    // const [result, fields] = await dbconnection.query(sql);
+    // res.send(result);
+    // console.log(result);
   } catch (err) {
     console.log(err);
   }
@@ -75,12 +102,15 @@ app.patch("/db-pgadmin/db-ubah", async(req, res) => {
 app.delete("/db-pgadmin/db-hapus", async(req, res) => {
   try {
     const sid = req.body.sid
-    const sql = `DELETE FROM student WHERE sid = ${sid}`;
+    const sql = `DELETE FROM student WHERE sid = '${sid}'`;
+    console.log(sid)
   
-    const [result, fields] = await dbconnection.query(sql);
+    await dbconnection.query(sql);
     
-    res.send(result);
-    console.log(result);
+    res.redirect('/')
+    // const [result, fields] = await dbconnection.query(sql);
+    // res.send(result);
+    // console.log(result);
   } catch (err) {
     console.log(err);
   }

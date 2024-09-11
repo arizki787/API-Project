@@ -1,25 +1,39 @@
-const mysql = require('mysql2/promise');
+// const mysql = require('mysql2/promise');
 
-const pool = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  database: 'ncc_try',
-  password: '',
-});
+// const pool = mysql.createPool({
+//   host: 'localhost',
+//   user: 'root',
+//   database: 'ncc_try',
+//   password: '',
+// });
 
 
 
-module.exports = pool;
+// module.exports = pool;
 
-// const {Client} = require('pg')
+const Pool = require('pg').Pool
 
-// const client = new Client({
+const pool = new Pool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    port: process.env.DB_PORT,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+})
+
+module.exports = pool
+
+// const Pool = require('pg').Pool
+
+// const pool = new Pool({
 //     host: "localhost",
 //     user: "postgres",
 //     port: 5432,
-//     password: "kweingetpasswordera13345",
+//     password: "12345",
 //     database: "test_api"
 // })
+
+// module.exports = pool
 
 // client.connect();
 
